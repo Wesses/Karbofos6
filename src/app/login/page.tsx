@@ -54,32 +54,12 @@ export default function MyForm() {
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(75%_75%_at_0%_0%,rgba(59,130,246,0.12)_0%,transparent_60%),radial-gradient(75%_75%_at_100%_100%,rgba(16,185,129,0.12)_0%,transparent_60%)]" />
       <div className="grid min-h-[100dvh] place-items-center px-4 py-10 sm:px-6">
         <div className="w-full max-w-5xl">
-          <div className="grid items-stretch gap-0 md:grid-cols-2">
-            <div className="relative hidden overflow-hidden rounded-t-2xl border-x border-t border-border bg-gradient-to-br from-primary/10 to-secondary/20 p-8 md:block md:rounded-l-2xl md:rounded-tr-none md:border-y">
-              <div className="absolute -left-10 -top-10 size-40 rounded-full bg-primary/15 blur-2xl" />
-              <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-chart-2/15 blur-2xl" />
-              <div className="relative z-10 flex h-full flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
-                    Ласкаво просимо
-                  </div>
-                  <h1 className="text-3xl font-bold leading-tight">З поверненням!</h1>
-                  <p className="text-muted-foreground">Увійдіть в акаунт, щоб продовжити роботу в панелі.</p>
-                </div>
-                <div className="mt-10 space-y-4 text-sm text-muted-foreground">
-                  <p className="leading-relaxed">
-                    Надійна авторизація, сучасний інтерфейс та акуратна адаптивна верстка.
-                  </p>
-                  <p className="leading-relaxed">Підтримка світлої й темної теми з коробки.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-b-2xl border-x border-b border-border bg-card/80 backdrop-blur-xl md:rounded-r-2xl md:rounded-bl-none">
+          <div className="flex items-center justify-center">
+            <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-xl">
               <div className="p-6 sm:p-10">
                 <div className="mb-8 space-y-2">
                   <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/70 px-2.5 py-1 text-xs text-muted-foreground backdrop-blur">
-                    Karbofos6
+                    Адміністрування користувачів
                   </div>
                   <h2 className="text-2xl font-semibold">Вхід до системи</h2>
                   <p className="text-sm text-muted-foreground">Введіть логін і пароль, щоб продовжити.</p>

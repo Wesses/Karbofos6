@@ -5,8 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  getUserAdminListOfDbs,
+  getUserAdminListOfRoles,
   postUserAdminAddDb,
   postUserAdminAddToRole,
   postUserAdminListAll,
@@ -24,6 +44,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<UserAdminUser[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [allRoles, setAllRoles] = useState<string[]>([]);
+  const [allDbs, setAllDbs] = useState<string[]>([]);
 
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("");
@@ -49,25 +71,20 @@ export default function AdminPage() {
       setLoading(true);
       setError(null);
       const list = await postUserAdminListAll();
+      const rolesList = await getUserAdminListOfRoles();
+      const dbsList = await getUserAdminListOfDbs();
+
+      console.log(rolesList, dbsList);
+
       setUsers(list);
+      setAllRoles(rolesList);
+      setAllDbs(dbsList);
     } catch (e: any) {
       setError(String(e?.message || e));
     } finally {
       setLoading(false);
     }
   }
-
-  const allRoles = useMemo(() => {
-    const s = new Set<string>();
-    users.forEach((u) => u.roles?.forEach((r) => s.add(r)));
-    return Array.from(s.values()).sort();
-  }, [users]);
-
-  const allDbs = useMemo(() => {
-    const s = new Set<string>();
-    users.forEach((u) => u.abondb?.forEach((d) => s.add(d)));
-    return Array.from(s.values()).sort();
-  }, [users]);
 
   const filtered = useMemo(() => {
     return users.filter((u) => {
@@ -90,7 +107,6 @@ export default function AdminPage() {
   };
 
   const handleRevokeAll = async () => {
-    if (!confirm("Скасувати доступ для всіх користувачів?")) return;
     await postUserAdminRevokeAll();
   };
 
@@ -102,20 +118,29 @@ export default function AdminPage() {
 
   const addRole = async () => {
     if (!selected || !newRole.trim()) return;
-    await postUserAdminAddToRole({ username: selected.name, role: newRole.trim() });
+    await postUserAdminAddToRole({
+      username: selected.name,
+      role: newRole.trim(),
+    });
     setNewRole("");
     await refreshAndKeepSelected();
   };
 
   const removeDb = async (db: string) => {
     if (!selected) return;
-    await postUserAdminRemoveDb({ username: selected.name, fbDatabaseName: db });
+    await postUserAdminRemoveDb({
+      username: selected.name,
+      fbDatabaseName: db,
+    });
     await refreshAndKeepSelected();
   };
 
   const addDb = async () => {
     if (!selected || !newDb.trim()) return;
-    await postUserAdminAddDb({ username: selected.name, fbDatabaseName: newDb.trim() });
+    await postUserAdminAddDb({
+      username: selected.name,
+      fbDatabaseName: newDb.trim(),
+    });
     setNewDb("");
     await refreshAndKeepSelected();
   };
@@ -140,12 +165,36 @@ export default function AdminPage() {
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-xl font-semibold">Панель адміністратора</h1>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => refresh()} disabled={loading}>
+          <Button
+            variant="secondary"
+            onClick={() => refresh()}
+            disabled={loading}
+          >
             Оновити
           </Button>
-          <Button variant="destructive" onClick={handleRevokeAll}>
-            Скасувати для всіх
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger>
+              {" "}
+              <Button variant="destructive">Відключити всіх</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Ви впевненні?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Цю дію неможливо скасувати. Це відлючить усіх користувачів.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Повернутись</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleRevokeAll}
+                  className="bg-red-600 text-white hover:bg-red-700"
+                >
+                  Відключити
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -228,16 +277,44 @@ export default function AdminPage() {
                     <Button size="sm" onClick={() => openDetails(u)}>
                       Відкрити
                     </Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleRevokeUser(u)}>
-                      Скасувати
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                        >
+                          Відключити
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Ви впевненні?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Цю дію неможливо скасувати. Це відлючить усіх
+                            користувачів.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Повернутись</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleRevokeUser(u)}
+                            className="bg-red-600 text-white hover:bg-red-700"
+                          >
+                            Відключити
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </TableCell>
               </TableRow>
             ))}
             {!loading && filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={4}
+                  className="text-center text-muted-foreground"
+                >
                   Немає даних
                 </TableCell>
               </TableRow>
@@ -251,13 +328,17 @@ export default function AdminPage() {
       <Sheet open={open} onOpenChange={setOpen}>
         <div className="h-full flex flex-col">
           <SheetHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-lg font-semibold">{selected?.name}</div>
-                  <div className="text-sm text-muted-foreground">Деталі користувача</div>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-lg font-semibold">{selected?.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  Деталі користувача
                 </div>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Закрити</Button>
               </div>
+              <Button variant="ghost" onClick={() => setOpen(false)}>
+                Закрити
+              </Button>
+            </div>
           </SheetHeader>
           <SheetContent>
             {/* Roles */}
@@ -267,13 +348,19 @@ export default function AdminPage() {
                 {selected?.roles?.map((r) => (
                   <div key={r} className="flex items-center gap-2">
                     <Badge>{r}</Badge>
-                    <Button size="sm" variant="outline" onClick={() => removeRole(r)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => removeRole(r)}
+                    >
                       Видалити
                     </Button>
                   </div>
                 ))}
                 {!selected?.roles?.length && (
-                  <span className="text-muted-foreground text-sm">Немає ролей</span>
+                  <span className="text-muted-foreground text-sm">
+                    Немає ролей
+                  </span>
                 )}
               </div>
               <div className="flex gap-2 items-center">
@@ -285,33 +372,65 @@ export default function AdminPage() {
                   <option value="" disabled>
                     Оберіть роль
                   </option>
-                  <option value="Inspector">Inspector</option>
+                  {allRoles.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
                 </select>
-                <Button onClick={addRole} disabled={!newRole}>
+                <Button
+                  onClick={addRole}
+                  disabled={!newRole || selected?.roles?.includes(newRole)}
+                >
                   Додати
                 </Button>
               </div>
             </section>
 
             {/* Databases */}
+
             <section className="space-y-2">
               <h3 className="font-medium">Доступні БД</h3>
               <div className="flex flex-wrap gap-2">
-                {selected?.abondb?.map((d) => (
-                  <div key={d} className="flex items-center gap-2">
-                    <Badge>{d}</Badge>
-                    <Button size="sm" variant="outline" onClick={() => removeDb(d)}>
+                {selected?.abondb?.map((db) => (
+                  <div key={db} className="flex items-center gap-2">
+                    <Badge>{db}</Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => removeDb(db)}
+                    >
                       Видалити
                     </Button>
                   </div>
                 ))}
                 {!selected?.abondb?.length && (
-                  <span className="text-muted-foreground text-sm">Немає доступів до БД</span>
+                  <span className="text-muted-foreground text-sm">
+                    Немає доступних БД
+                  </span>
                 )}
               </div>
-              <div className="flex gap-2">
-                <Input placeholder="Назва БД" value={newDb} onChange={(e) => setNewDb(e.target.value)} />
-                <Button onClick={addDb}>Додати</Button>
+              <div className="flex gap-2 items-center">
+                <select
+                  className="h-9 rounded-md border bg-background px-3 text-sm"
+                  value={newDb}
+                  onChange={(e) => setNewDb(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Оберіть БД
+                  </option>
+                  {allDbs.map((db) => (
+                    <option key={db} value={db}>
+                      {db}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  onClick={addDb}
+                  disabled={!newDb || selected?.abondb?.includes(newDb)}
+                >
+                  Додати
+                </Button>
               </div>
             </section>
           </SheetContent>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
-axios.defaults.baseURL = "https://communal.in.ua/Karbofos6api/api/";
+axios.defaults.baseURL = "https://gk50a.biz.ua/Karbofos6api/api/";
 const authenticatePath = "Authenticate";
 const userAdminPath = "UserAdmin";
 
@@ -185,6 +185,36 @@ export const postUserAdminRemoveDb = async (data: {
 }) => {
   try {
     const response = await axios.post(`${userAdminPath}/remove-db`, data);
+
+    if (response.statusText !== "OK") {
+      throw new Error(response.statusText);
+    }
+
+    return response.data;
+  } catch (e: any) {
+    console.error("Помилка при виконанні запиту:", e);
+    throw e?.response?.status || "Unknown error";
+  }
+};
+
+export const getUserAdminListOfRoles = async () => {
+  try {
+    const response = await axios.get(`${userAdminPath}/list-roles`);
+
+    if (response.statusText !== "OK") {
+      throw new Error(response.statusText);
+    }
+
+    return response.data;
+  } catch (e: any) {
+    console.error("Помилка при виконанні запиту:", e);
+    throw e?.response?.status || "Unknown error";
+  }
+};
+
+export const getUserAdminListOfDbs = async () => {
+  try {
+    const response = await axios.get(`${userAdminPath}/list-db`);
 
     if (response.statusText !== "OK") {
       throw new Error(response.statusText);
