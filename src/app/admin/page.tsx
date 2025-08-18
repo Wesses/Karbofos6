@@ -38,6 +38,8 @@ import {
 } from "../api/api";
 import { getToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { showCustomToast } from "../utils/customToast";
+import { X } from "lucide-react";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -74,8 +76,6 @@ export default function AdminPage() {
       const rolesList = await getUserAdminListOfRoles();
       const dbsList = await getUserAdminListOfDbs();
 
-      console.log(rolesList, dbsList);
-
       setUsers(list);
       setAllRoles(rolesList);
       setAllDbs(dbsList);
@@ -103,44 +103,105 @@ export default function AdminPage() {
   };
 
   const handleRevokeUser = async (u: UserAdminUser) => {
-    await postUserAdminRevoke(u.name);
+    try {
+      const res = await postUserAdminRevoke(u.name);
+      if (res === "Success") {
+        showCustomToast({
+          message: `Користувача ${u.name} відключено`,
+          bg: "bg-green-600",
+        });
+      }
+    } catch (e: any) {
+      showCustomToast({
+        message: `Не вдалося відключити користувача ${u.name}`,
+        bg: "bg-red-600",
+      });
+    }
   };
 
   const handleRevokeAll = async () => {
-    await postUserAdminRevokeAll();
+    try {
+      const res = await postUserAdminRevokeAll();
+      if (res === "Success") {
+        showCustomToast({
+          message: `Всіх користувача відключено`,
+          bg: "bg-green-600",
+        });
+      }
+    } catch (e: any) {
+      showCustomToast({
+        message: `Не вдалося відключити всіх користувачів`,
+        bg: "bg-red-600",
+        icon: <X className="size-5" />,
+      });
+    }
   };
 
   const removeRole = async (role: string) => {
     if (!selected) return;
-    await postUserAdminRemoveFromRole({ username: selected.name, role });
+    try {
+      await postUserAdminRemoveFromRole({ username: selected.name, role });
+    } catch (e: any) {
+      showCustomToast({
+        message: `Не можливо видалити роль ${role} для користувача ${selected.name}`,
+        bg: "bg-red-600",
+        icon: <X className="size-5" />,
+      });
+    }
+
     await refreshAndKeepSelected();
   };
 
   const addRole = async () => {
     if (!selected || !newRole.trim()) return;
-    await postUserAdminAddToRole({
-      username: selected.name,
-      role: newRole.trim(),
-    });
+    try {
+      await postUserAdminAddToRole({
+        username: selected.name,
+        role: newRole.trim(),
+      });
+    } catch (e: any) {
+      showCustomToast({
+        message: `Не можливо додати роль ${newRole} для користувача ${selected.name}`,
+        bg: "bg-red-600",
+        icon: <X className="size-5" />,
+      });
+    }
+
     setNewRole("");
     await refreshAndKeepSelected();
   };
 
   const removeDb = async (db: string) => {
     if (!selected) return;
-    await postUserAdminRemoveDb({
-      username: selected.name,
-      fbDatabaseName: db,
-    });
+    try {
+      await postUserAdminRemoveDb({
+        username: selected.name,
+        fbDatabaseName: db,
+      });
+    } catch (e: any) {
+      showCustomToast({
+        message: `Не можливо видалити БД ${db} для користувача ${selected.name}`,
+        bg: "bg-red-600",
+        icon: <X className="size-5" />,
+      });
+    }
     await refreshAndKeepSelected();
   };
 
   const addDb = async () => {
     if (!selected || !newDb.trim()) return;
-    await postUserAdminAddDb({
-      username: selected.name,
-      fbDatabaseName: newDb.trim(),
-    });
+    try {
+      await postUserAdminAddDb({
+        username: selected.name,
+        fbDatabaseName: newDb.trim(),
+      });
+    } catch (e: any) {
+      showCustomToast({
+        message: `Не можливо додати БД ${newDb} для користувача ${selected.name}`,
+        bg: "bg-red-600",
+        icon: <X className="size-5" />,
+      });
+    }
     setNewDb("");
     await refreshAndKeepSelected();
   };
@@ -173,8 +234,7 @@ export default function AdminPage() {
             Оновити
           </Button>
           <AlertDialog>
-            <AlertDialogTrigger>
-              {" "}
+            <AlertDialogTrigger asChild>
               <Button variant="destructive">Відключити всіх</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -278,11 +338,8 @@ export default function AdminPage() {
                       Відкрити
                     </Button>
                     <AlertDialog>
-                      <AlertDialogTrigger>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                        >
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="destructive">
                           Відключити
                         </Button>
                       </AlertDialogTrigger>

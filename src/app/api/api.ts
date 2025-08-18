@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
+import { log } from "console";
 
 axios.defaults.baseURL = "https://gk50a.biz.ua/Karbofos6api/api/";
 const authenticatePath = "Authenticate";
@@ -66,11 +67,11 @@ export const postUserAdminRevoke = async (username: string) => {
       `${userAdminPath}/revoke/${encodeURIComponent(username)}`
     );
 
-    if (response.statusText !== "OK") {
+    if (response.statusText !== "No Content") {
       throw new Error(response.statusText);
     }
 
-    return response.data;
+    return "Success";
   } catch (e: any) {
     console.error("Помилка при виконанні запиту:", e);
     throw e?.response?.status || "Unknown error";
@@ -136,7 +137,7 @@ export const postUserAdminAddToRole = async (data: {
       throw new Error(response.statusText);
     }
 
-    return response.data;
+    return "Success";
   } catch (e: any) {
     console.error("Помилка при виконанні запиту:", e);
     throw e?.response?.status || "Unknown error";
