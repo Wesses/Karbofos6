@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useMemo, useState } from "react";
@@ -39,7 +40,7 @@ import {
 import { getToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { showCustomToast } from "../utils/customToast";
-import { X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -221,10 +222,22 @@ export default function AdminPage() {
     }
   }
 
+  const handleLogOut = () => {
+    localStorage.removeItem("auth_token");
+    window.location.href = "/login";
+  };
+
   return (
     <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between gap-2">
-        <h1 className="text-xl font-semibold">Панель адміністратора</h1>
+      <div className="flex sm:items-center items-start justify-between gap-2 sm:flex-row flex-col">
+        <div className="flex items-center gap-2">
+          <Button onClick={handleLogOut}>
+            <ArrowLeft />
+            Вихід
+          </Button>
+          <h1 className="text-xl font-semibold">Панель адміністратора</h1>
+        </div>
+
         <div className="flex gap-2">
           <Button
             variant="secondary"
@@ -241,11 +254,11 @@ export default function AdminPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Ви впевненні?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Цю дію неможливо скасувати. Це відлючить усіх користувачів.
+                  Цю дію неможливо скасувати. Це відключить всіх користувачів.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Повернутись</AlertDialogCancel>
+                <AlertDialogCancel>Скасувати</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleRevokeAll}
                   className="bg-red-600 text-white hover:bg-red-700"

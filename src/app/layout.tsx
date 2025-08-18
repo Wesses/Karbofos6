@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Karbofos6",
+  title: "Адміністрування користувачів",
   description: "app",
 };
 
