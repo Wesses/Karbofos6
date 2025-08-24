@@ -41,6 +41,7 @@ import { getToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { showCustomToast } from "../utils/customToast";
 import { ArrowLeft, X } from "lucide-react";
+import Loader from "@/myComponents/loader";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -226,6 +227,13 @@ export default function AdminPage() {
     localStorage.removeItem("auth_token");
     window.location.href = "/login";
   };
+
+
+  if (loading) {
+    return (
+      <Loader />
+    )
+  }
 
   return (
     <div className="p-6 space-y-4">
