@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import React from "react";
 
-const Loader = () => {
+const MyLoader = () => {
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <div className="text-center">
@@ -14,4 +14,4 @@ const Loader = () => {
   );
 };
 
-export default Loader;
+export default MyLoader;

@@ -42,7 +42,7 @@ export default function MyForm() {
         throw new Error("Invalid login response: token missing");
       }
       saveToken(token);
-      router.push("/admin");
+      router.push("/yourRoles");
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Не вдалося надіслати форму. Спробуйте ще раз.");

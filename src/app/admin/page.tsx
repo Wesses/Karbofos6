@@ -40,8 +40,9 @@ import {
 import { getToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { showCustomToast } from "../utils/customToast";
-import { ArrowLeft, X } from "lucide-react";
-import Loader from "@/myComponents/loader";
+import { X } from "lucide-react";
+import Loader from "@/myComponents/MyLoader";
+import LogOutButton from "@/myComponents/LogOutButton";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -222,27 +223,15 @@ export default function AdminPage() {
       setLoading(false);
     }
   }
-
-  const handleLogOut = () => {
-    localStorage.removeItem("auth_token");
-    window.location.href = "/login";
-  };
-
-
   if (loading) {
-    return (
-      <Loader />
-    )
+    return <Loader />;
   }
 
   return (
     <div className="p-6 space-y-4">
       <div className="flex sm:items-center items-start justify-between gap-2 sm:flex-row flex-col">
         <div className="flex items-center gap-2">
-          <Button onClick={handleLogOut}>
-            <ArrowLeft />
-            Вихід
-          </Button>
+          <LogOutButton />
           <h1 className="text-xl font-semibold">Панель адміністратора</h1>
         </div>
 
