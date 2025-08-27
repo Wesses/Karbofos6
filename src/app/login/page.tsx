@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { postLoginReq } from "../api/api";
+import { getAllRoles, postLoginReq } from "../api/api";
 import { saveToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { useRolesStore } from "@/lib/stores/useRolesStore";
 
 const formSchema = z.object({
   username: z.string().min(2),
@@ -25,6 +26,7 @@ const formSchema = z.object({
 
 export default function MyForm() {
   const router = useRouter();
+  const setRoles = useRolesStore((state) => state.setRoles);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,6 +44,9 @@ export default function MyForm() {
         throw new Error("Invalid login response: token missing");
       }
       saveToken(token);
+      const rolesData = await getAllRoles();
+      setRoles(rolesData);
+
       router.push("/yourRoles");
     } catch (error) {
       console.error("Form submission error", error);
@@ -58,15 +63,17 @@ export default function MyForm() {
             <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-xl">
               <div className="p-6 sm:p-10">
                 <div className="mb-8 space-y-2">
-                  <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-background/70 px-2.5 py-1 text-xs text-muted-foreground backdrop-blur">
-                    Адміністрування користувачів
-                  </div>
                   <h2 className="text-2xl font-semibold">Вхід до системи</h2>
-                  <p className="text-sm text-muted-foreground">Введіть логін і пароль, щоб продовжити.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Введіть логін і пароль, щоб продовжити.
+                  </p>
                 </div>
 
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
                     <FormField
                       control={form.control}
                       name="username"
@@ -74,7 +81,11 @@ export default function MyForm() {
                         <FormItem>
                           <FormLabel>Логін</FormLabel>
                           <FormControl>
-                            <Input autoComplete="username" placeholder="Ваш логін" {...field} />
+                            <Input
+                              autoComplete="username"
+                              placeholder="Ваш логін"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -88,7 +99,11 @@ export default function MyForm() {
                         <FormItem>
                           <FormLabel>Пароль</FormLabel>
                           <FormControl>
-                            <PasswordInput autoComplete="current-password" placeholder="Ваш пароль" {...field} />
+                            <PasswordInput
+                              autoComplete="current-password"
+                              placeholder="Ваш пароль"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -96,7 +111,11 @@ export default function MyForm() {
                     />
 
                     <div className="pt-2">
-                      <Button className="w-full" type="submit" disabled={form.formState.isSubmitting}>
+                      <Button
+                        className="w-full"
+                        type="submit"
+                        disabled={form.formState.isSubmitting}
+                      >
                         {form.formState.isSubmitting ? (
                           <span className="inline-flex items-center gap-2">
                             <span className="size-4 animate-spin rounded-full border-2 border-current border-b-transparent" />
