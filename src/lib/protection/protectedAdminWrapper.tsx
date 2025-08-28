@@ -8,13 +8,13 @@ import MyLoader from '@/myComponents/MyLoader';
 
 export default function ProtectedAdminWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const roles = useRolesStore((state) => state.roles);
+  const { roles, hydrated } = useRolesStore();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
+    if (!hydrated) return;
 
     const token = getToken();
-    
     if (!token) {
       router.replace('/login');
       return;
@@ -26,12 +26,10 @@ export default function ProtectedAdminWrapper({ children }: { children: React.Re
     }
 
     setIsAuthorized(true);
-  }, [router, roles]);
+  }, [router, roles, hydrated]);
 
-  if (!isAuthorized) {
-    return (
-      <MyLoader />
-    );
+  if (!hydrated || !isAuthorized) {
+    return <MyLoader />;
   }
 
   return <>{children}</>;

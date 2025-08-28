@@ -230,10 +230,7 @@ export default function AdminPage() {
   return (
     <div className="p-6 space-y-4">
       <div className="flex sm:items-center items-start justify-between gap-2 sm:flex-row flex-col">
-        <div className="flex items-center gap-2">
-          <LogOutButton />
-          <h1 className="text-xl font-semibold">Панель адміністратора</h1>
-        </div>
+        <h1 className="text-xl font-semibold">Панель адміністратора</h1>
 
         <div className="flex gap-2">
           <Button
@@ -265,6 +262,7 @@ export default function AdminPage() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          <LogOutButton />
         </div>
       </div>
 

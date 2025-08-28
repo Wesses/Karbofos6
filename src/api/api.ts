@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { clearToken, getToken } from "@/lib/auth";
 import axios from "axios";
 
 axios.defaults.baseURL = "https://gk50a.biz.ua/Karbofos6api/api/";
@@ -10,7 +11,7 @@ axios.interceptors.request.use((config) => {
   try {
     const isLogin = config.url?.includes(`${authenticatePath}/login`);
     if (!isLogin && typeof window !== "undefined") {
-      const token = localStorage.getItem("auth_token");
+      const token = getToken();
       if (token) {
         config.headers = config.headers ?? {};
         (config.headers as Record<string, string>)[
@@ -31,7 +32,7 @@ axios.interceptors.response.use(
     const status = error?.response?.status;
     if (typeof window !== "undefined" && status === 401) {
       try {
-        localStorage.removeItem("auth_token");
+        clearToken();
         window.location.href = "/login";
       } catch {
         // ignore
