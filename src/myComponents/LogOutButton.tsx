@@ -20,8 +20,8 @@ const LogOutButton = ({className}: Props) => {
   };
   return (
     <Button onClick={handleLogOut} className={cn(className, "cursor-pointer")}>
-      <LogOut />
       <span className="sm:inline hidden">Вихід</span>
+      <LogOut />
     </Button>
   );
 };
