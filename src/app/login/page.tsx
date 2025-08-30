@@ -47,7 +47,7 @@ export default function MyForm() {
       const rolesData = await getAllRoles();
       setRoles(rolesData);
 
-      router.push("/yourRoles");
+      router.push("/your-roles");
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Не вдалося надіслати форму. Спробуйте ще раз.");

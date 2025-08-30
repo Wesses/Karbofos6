@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { UserCog, Eye, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRolesStore } from "@/lib/stores/useRolesStore";
-import LogOutButton from "@/myComponents/LogOutButton";
-import MyLoader from "@/myComponents/MyLoader";
+import LogOutButton from "@/lib/myComponents/LogOutButton";
+import MyLoader from "@/lib/myComponents/MyLoader";
 
 export default function RolesPage() {
   const { roles, hydrated } = useRolesStore();
@@ -58,10 +58,10 @@ export default function RolesPage() {
   };
 
   if (!hydrated) {
-    return <MyLoader/>;
+    return <MyLoader />;
   }
 
-  if (roles.length === 0) {
+  if (roles.length === 0 && hydrated) {
     return (
       <div className="flex items-center justify-center min-h-screen px-4">
         <Card className="w-full max-w-md">
@@ -86,7 +86,7 @@ export default function RolesPage() {
       <div className="container mx-auto py-4 sm:py-6 md:py-8 px-3 sm:px-4 lg:px-6">
         {/* Заголовок */}
         <div className="mb-6 sm:mb-8 md:mb-10 text-center flex justify-center items-center relative">
-          <LogOutButton className="absolute right-0 md:bottom-8 bottom-1"/>
+          <LogOutButton className="absolute right-0 md:bottom-8 bottom-1" />
           <div>
             <h1 className="text-xl md:text-3xl sm:text-2xl font-bold tracking-tight text-foreground">
               Доступні ролі

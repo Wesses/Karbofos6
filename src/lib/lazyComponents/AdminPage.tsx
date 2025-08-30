@@ -39,10 +39,10 @@ import {
 } from "../../api/api";
 import { getToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import { showCustomToast } from "../utils/customToast";
+import { showCustomToast } from "../myComponents/customToast";
 import { X } from "lucide-react";
-import Loader from "@/myComponents/MyLoader";
-import LogOutButton from "@/myComponents/LogOutButton";
+import Loader from "@/lib/myComponents/MyLoader";
+import LogOutButton from "@/lib/myComponents/LogOutButton";
 
 export default function AdminPage() {
   const router = useRouter();

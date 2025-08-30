@@ -5,6 +5,7 @@ import axios from "axios";
 axios.defaults.baseURL = "https://gk50a.biz.ua/Karbofos6api/api/";
 const authenticatePath = "Authenticate";
 const userAdminPath = "UserAdmin";
+const abonInspectorPath = "AbonInspector";
 
 // Attach token from localStorage to all requests except login
 axios.interceptors.request.use((config) => {
@@ -231,6 +232,21 @@ export const getUserAdminListOfDbs = async () => {
 export const getAllRoles = async () => {
   try {
     const response = await axios.get(`${authenticatePath}/my-roles`);
+
+    if (response.statusText !== "OK") {
+      throw new Error(response.statusText);
+    }
+
+    return response.data;
+  } catch (e: any) {
+    console.error("Помилка при виконанні запиту:", e);
+    throw e?.response?.status || "Unknown error";
+  }
+};
+
+export const getInspectorDBS = async () => {
+  try {
+    const response = await axios.get(`${abonInspectorPath}/get-inspector-orgs`);
 
     if (response.statusText !== "OK") {
       throw new Error(response.statusText);

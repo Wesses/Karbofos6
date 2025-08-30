@@ -14,10 +14,9 @@ const LogOutButton = ({ className }: Props) => {
   const router = useRouter();
 
   const handleLogOut = () => {
+    router.replace("/login");
     clearToken();
     setRoles([]);
-    localStorage.removeItem("roles-storage");
-    router.replace("/login");
   };
   return (
     <Button onClick={handleLogOut} className={cn(className, "cursor-pointer")}>
